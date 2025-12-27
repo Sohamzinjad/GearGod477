@@ -99,7 +99,7 @@ export default function EquipmentPage() {
                                 <td className="px-6 py-3 text-gray-600">Mitchell Admin</td>
                                 <td className="px-6 py-3 text-gray-600">{getCategoryName(eq.category_id)}</td>
                                 <td className="px-6 py-3">
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${eq.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${eq.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
                                         {eq.status}
                                     </span>
                                 </td>

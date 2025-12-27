@@ -20,9 +20,9 @@ class RequestStage(str, enum.Enum):
     SCRAP = "Scrap"
 
 class EquipmentStatus(str, enum.Enum):
-    ACTIVE = "Active"
-    MAINTENANCE = "Maintenance"
-    DECOMMISSIONED = "Decommissioned"
+    ACTIVE = "ACTIVE"
+    MAINTENANCE = "MAINTENANCE"
+    DECOMMISSIONED = "DECOMMISSIONED"
 
 class MaintenanceFor(str, enum.Enum):
     EQUIPMENT = "Equipment"
@@ -72,7 +72,7 @@ class Equipment(Base):
     serial_number = Column(String, unique=True, index=True)
     department = Column(String)
     default_technician_id = Column(String) # Placeholder for Technician User ID
-    status = Column(Enum(EquipmentStatus), default=EquipmentStatus.ACTIVE)
+    status = Column(Enum(EquipmentStatus, values_callable=lambda obj: [e.value for e in obj]), default=EquipmentStatus.ACTIVE)
     
     # New Fields
     employee_id = Column(String, nullable=True) # Owner/Employee
