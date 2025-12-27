@@ -72,10 +72,10 @@ export default function TeamsPage() {
             <div className="w-1/3 bg-white border border-gray-200 rounded-lg flex flex-col h-full">
                 <div className="p-4 border-b border-gray-200">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold">Teams</h2>
+                        <h2 className="text-lg font-semibold text-gray-800">Teams</h2>
                         <button
                             onClick={() => setShowCreateTeam(true)}
-                            className="btn btn-primary flex items-center gap-1 text-sm bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700"
+                            className="btn flex items-center gap-1 text-sm bg-[#714B67] text-white px-3 py-1.5 rounded hover:bg-[#5d3d54] shadow-sm transition-colors"
                         >
                             <Plus size={16} /> New Team
                         </button>
@@ -86,13 +86,13 @@ export default function TeamsPage() {
                     <div className="p-4 bg-gray-50 border-b border-gray-200">
                         <form onSubmit={handleCreateTeam} className="flex gap-2">
                             <input
-                                className="flex-1 border border-gray-300 rounded-md p-1.5 text-sm"
+                                className="flex-1 border border-gray-300 rounded-md p-1.5 text-sm focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] outline-none"
                                 placeholder="Team Name"
                                 value={newTeamName}
                                 onChange={e => setNewTeamName(e.target.value)}
                             />
-                            <button type="submit" className="text-xs bg-green-600 text-white px-2 rounded">Save</button>
-                            <button type="button" onClick={() => setShowCreateTeam(false)} className="text-xs text-gray-500">Cancel</button>
+                            <button type="submit" className="text-xs bg-green-600 text-white px-2 rounded hover:bg-green-700">Save</button>
+                            <button type="button" onClick={() => setShowCreateTeam(false)} className="text-xs text-gray-500 hover:text-gray-700">Cancel</button>
                         </form>
                     </div>
                 )}
@@ -102,10 +102,10 @@ export default function TeamsPage() {
                         <div
                             key={team.id}
                             onClick={() => setSelectedTeam(team)}
-                            className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${selectedTeam?.id === team.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''}`}
+                            className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${selectedTeam?.id === team.id ? 'bg-[#714B67]/5 border-l-4 border-l-[#714B67]' : 'border-l-4 border-l-transparent'}`}
                         >
                             <div className="flex justify-between items-center">
-                                <h3 className="font-medium text-gray-900">{team.name}</h3>
+                                <h3 className={`font-medium ${selectedTeam?.id === team.id ? 'text-[#714B67]' : 'text-gray-900'}`}>{team.name}</h3>
                                 <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
                                     {getTeamMembers(team.id).length} members
                                 </span>
@@ -126,7 +126,7 @@ export default function TeamsPage() {
                             </div>
                             <button
                                 onClick={() => setShowAssign(true)}
-                                className="flex items-center gap-2 text-sm bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md hover:bg-gray-50"
+                                className="flex items-center gap-2 text-sm bg-white border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md hover:bg-gray-50 transition-colors"
                             >
                                 <UserPlus size={16} /> Assign User
                             </button>
@@ -137,7 +137,7 @@ export default function TeamsPage() {
                                 <label className="block text-sm font-medium text-gray-700 mb-2">Select User to Assign</label>
                                 <div className="flex gap-2">
                                     <select
-                                        className="flex-1 border border-gray-300 rounded-md p-2"
+                                        className="flex-1 border border-gray-300 rounded-md p-2 focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] outline-none"
                                         value={userToAssign}
                                         onChange={e => setUserToAssign(e.target.value)}
                                     >
@@ -146,7 +146,7 @@ export default function TeamsPage() {
                                             <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
                                         ))}
                                     </select>
-                                    <button type="submit" className="bg-blue-600 text-white px-4 rounded-md">Assign</button>
+                                    <button type="submit" className="bg-[#714B67] text-white px-4 rounded-md hover:bg-[#5d3d54] transition-colors">Assign</button>
                                     <button type="button" onClick={() => setShowAssign(false)} className="text-gray-500 px-4">Cancel</button>
                                 </div>
                             </form>

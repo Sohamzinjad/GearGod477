@@ -58,12 +58,12 @@ export default function EquipmentPage() {
     return (
         <div className="equipment-page h-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
                 <div className="flex items-center gap-4">
                     <h2 className="text-xl font-bold text-gray-800">Equipment</h2>
                     <button
                         onClick={() => navigate('/equipment/new')}
-                        className="btn btn-primary flex items-center gap-1 text-sm bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700"
+                        className="btn flex items-center gap-1 text-sm bg-[#714B67] text-white px-4 py-1.5 rounded hover:bg-[#5d3d54] shadow-sm transition-colors"
                     >
                         <Plus size={16} /> New
                     </button>
@@ -73,7 +73,7 @@ export default function EquipmentPage() {
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] transition-all"
                     />
                 </div>
             </div>

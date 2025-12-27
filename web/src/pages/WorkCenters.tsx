@@ -53,10 +53,10 @@ export default function WorkCentersPage() {
             <div className="w-1/3 bg-white border border-gray-200 rounded-lg flex flex-col h-full">
                 <div className="p-4 border-b border-gray-200">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold">Work Centers</h2>
+                        <h2 className="text-lg font-semibold text-gray-800">Work Centers</h2>
                         <button
                             onClick={() => { setShowCreate(true); setSelectedWC(null); }}
-                            className="btn btn-primary flex items-center gap-1 text-sm bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700"
+                            className="btn flex items-center gap-1 text-sm bg-[#714B67] text-white px-3 py-1.5 rounded hover:bg-[#5d3d54] shadow-sm transition-colors"
                         >
                             <Plus size={16} /> New
                         </button>
@@ -66,7 +66,7 @@ export default function WorkCentersPage() {
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] transition-all"
                         />
                     </div>
                 </div>
@@ -76,11 +76,11 @@ export default function WorkCentersPage() {
                         <div
                             key={wc.id}
                             onClick={() => setSelectedWC(wc)}
-                            className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${selectedWC?.id === wc.id ? 'bg-blue-50 border-l-4 border-l-blue-600' : ''}`}
+                            className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors ${selectedWC?.id === wc.id ? 'bg-[#714B67]/5 border-l-4 border-l-[#714B67]' : 'border-l-4 border-l-transparent'}`}
                         >
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h3 className="font-medium text-gray-900">{wc.name}</h3>
+                                    <h3 className={`font-medium ${selectedWC?.id === wc.id ? 'text-[#714B67]' : 'text-gray-900'}`}>{wc.name}</h3>
                                     <p className="text-sm text-gray-500">{wc.code}</p>
                                 </div>
                             </div>
@@ -148,8 +148,8 @@ export default function WorkCentersPage() {
                         </div>
 
                         <div className="mt-8 flex justify-end gap-3">
-                            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
-                            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Create Work Center</button>
+                            <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 text-sm font-medium">Cancel</button>
+                            <button type="submit" className="px-4 py-2 bg-[#714B67] text-white rounded hover:bg-[#5d3d54] text-sm font-medium shadow-sm transition-colors">Create Work Center</button>
                         </div>
                     </form>
                 ) : selectedWC ? (

@@ -22,18 +22,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className="layout-container flex flex-col h-screen">
             {/* Top Navbar */}
-            <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 shrink-0 z-10">
+            <header className="bg-[#714B67] border-b border-[#714B67] h-16 flex items-center justify-between px-6 shrink-0 z-10 shadow-md">
                 <div className="flex items-center gap-8">
                     <div className="flex items-center gap-2">
-                        <Wrench className="text-blue-600" size={24} />
-                        <span className="text-xl font-bold text-gray-800">GearGuard</span>
+                        <Wrench className="text-white" size={24} />
+                        <span className="text-xl font-bold text-white tracking-wide">GearGuard</span>
                     </div>
 
                     <nav className="flex items-center gap-1">
                         {navItems.map((item) => {
-                            // const Icon = item.icon; 
-                            // Icons in navbar might be too clustered, lets use text primarily or small icons.
-                            // Mockups often show text links in top bar for Odoo-like apps.
                             const isActive = location.pathname.startsWith(item.path);
 
                             return (
@@ -43,8 +40,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     className={clsx(
                                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
                                         isActive
-                                            ? 'bg-gray-100 text-gray-900'
-                                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                                            ? 'bg-white/10 text-white shadow-sm'
+                                            : 'text-white/70 hover:text-white hover:bg-white/5'
                                     )}
                                 >
                                     {item.name}
@@ -56,10 +53,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
                 <div className="user-profile flex items-center gap-4">
                     <div className="text-right hidden md:block">
-                        <p className="text-sm font-medium text-gray-900">{user?.name || 'Guest'}</p>
-                        <p className="text-xs text-gray-500">{user?.role || 'Visitor'}</p>
+                        <p className="text-sm font-medium text-white">{user?.name || 'Guest'}</p>
+                        <p className="text-xs text-white/70">{user?.role || 'Visitor'}</p>
                     </div>
-                    <button onClick={logout} className="text-gray-400 hover:text-red-500 px-2" title="Logout">
+                    <button onClick={logout} className="text-white/70 hover:text-white px-2 transition-colors" title="Logout">
                         <LogOut size={20} />
                     </button>
                 </div>

@@ -63,12 +63,12 @@ export default function CategoriesPage() {
     return (
         <div className="h-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
                 <div className="flex items-center gap-4">
                     <h2 className="text-xl font-bold text-gray-800">Categories</h2>
                     <button
                         onClick={() => setShowCreate(true)}
-                        className="flex items-center gap-1 text-sm bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700"
+                        className="flex items-center gap-1 text-sm bg-[#714B67] text-white px-4 py-1.5 rounded hover:bg-[#5d3d54] shadow-sm transition-colors"
                     >
                         <Plus size={16} /> New
                     </button>
@@ -78,7 +78,7 @@ export default function CategoriesPage() {
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] transition-all"
                     />
                 </div>
             </div>
@@ -125,7 +125,7 @@ export default function CategoriesPage() {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
                                 <input
                                     autoFocus
-                                    className="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] outline-none"
                                     value={newCategoryName}
                                     onChange={e => setNewCategoryName(e.target.value)}
                                     placeholder="e.g. Computers"
@@ -134,7 +134,7 @@ export default function CategoriesPage() {
                             <div className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Responsible</label>
                                 <select
-                                    className="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                                    className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] outline-none bg-white"
                                     value={responsibleId}
                                     onChange={e => setResponsibleId(e.target.value)}
                                 >
@@ -145,7 +145,7 @@ export default function CategoriesPage() {
                             <div className="mb-4">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
                                 <input
-                                    className="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    className="w-full border border-gray-300 rounded p-2 focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] outline-none"
                                     value={companyName}
                                     onChange={e => setCompanyName(e.target.value)}
                                     placeholder="Company Name"
@@ -162,7 +162,7 @@ export default function CategoriesPage() {
                                 <button
                                     type="submit"
                                     disabled={!newCategoryName.trim()}
-                                    className={`px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 ${!newCategoryName.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    className={`px-4 py-2 bg-[#714B67] text-white rounded hover:bg-[#5d3d54] transition-colors ${!newCategoryName.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
                                     Create
                                 </button>

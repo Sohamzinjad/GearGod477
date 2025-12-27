@@ -57,7 +57,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-center mb-6">
                 <button
                     onClick={() => navigate('/requests')}
-                    className="btn border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 flex items-center gap-1 shadow-sm px-4 py-1.5 rounded"
+                    className="btn border border-[#714B67] bg-[#714B67] text-white hover:bg-[#5d3d54] flex items-center gap-1 shadow-sm px-4 py-1.5 rounded transition-colors"
                 >
                     <span className="font-semibold text-lg">New</span>
                 </button>
@@ -67,7 +67,7 @@ export default function Dashboard() {
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] transition-all"
                     />
                 </div>
 

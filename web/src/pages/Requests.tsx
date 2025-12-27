@@ -63,19 +63,19 @@ export default function RequestsPage() {
     return (
         <div className="requests-page h-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
                 <div className="flex items-center gap-4">
                     <h2 className="text-xl font-bold text-gray-800">Maintenance Requests</h2>
                     <button
                         onClick={() => navigate('/requests/new')}
-                        className="btn btn-primary flex items-center gap-1 text-sm bg-blue-600 text-white px-4 py-1.5 rounded hover:bg-blue-700"
+                        className="btn flex items-center gap-1 text-sm bg-[#714B67] text-white px-4 py-1.5 rounded hover:bg-[#5d3d54] shadow-sm transition-colors"
                     >
                         <Plus size={16} /> New
                     </button>
                     {equipmentId && (
-                        <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm">
+                        <div className="flex items-center gap-2 bg-[#00A09D]/10 text-[#00A09D] px-3 py-1 rounded-full text-sm font-medium border border-[#00A09D]/20">
                             <span>Filtered by Equipment #{equipmentId}</span>
-                            <button onClick={() => navigate('/requests')} className="hover:text-blue-900 font-bold">×</button>
+                            <button onClick={() => navigate('/requests')} className="hover:text-[#007e7b] font-bold">×</button>
                         </div>
                     )}
                 </div>
@@ -84,7 +84,7 @@ export default function RequestsPage() {
                     <input
                         type="text"
                         placeholder="Search..."
-                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] transition-all"
                     />
                 </div>
             </div>

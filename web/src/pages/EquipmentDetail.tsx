@@ -301,10 +301,10 @@ export default function EquipmentDetailPage() {
 
                 <div className="mt-8">
                     <div className="border-b border-gray-200 mb-4">
-                        <button type="button" className="px-4 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600">Description</button>
+                        <button type="button" className="px-4 py-2 text-sm font-medium text-[#714B67] border-b-2 border-[#714B67]">Description</button>
                     </div>
                     <textarea
-                        className="w-full border border-gray-300 rounded-md p-2"
+                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-1 focus:ring-[#714B67] focus:border-[#714B67] outline-none transition-all"
                         rows={4}
                         placeholder="Add description..."
                         value={formData.description}
@@ -313,8 +313,8 @@ export default function EquipmentDetailPage() {
                 </div>
 
                 <div className="mt-8 flex justify-end gap-3">
-                    <button type="button" onClick={() => navigate('/equipment')} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">Cancel</button>
-                    <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">{isNew ? 'Create' : 'Save'}</button>
+                    <button type="button" onClick={() => navigate('/equipment')} className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 text-sm font-medium">Cancel</button>
+                    <button type="submit" className="px-4 py-2 bg-[#714B67] text-white rounded-md hover:bg-[#5d3d54] text-sm font-medium shadow-sm transition-colors">{isNew ? 'Create' : 'Save'}</button>
                 </div>
             </form>
         </div>
