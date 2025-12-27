@@ -1,163 +1,119 @@
-# Odoo-x-Hackathon
+# GearGuard: Maintenance & Equipment Manager
 
-🛠️ Maintenance Request Management System
+**GearGuard** is a robust, role-based maintenance management system designed to streamline equipment tracking, maintenance requests, and workflow approvals. Built with a modern tech stack, it emulates the clean, functional aesthetic of Odoo while providing strict control over assignments and approvals.
 
-A role-based maintenance request management system designed to ensure clear approvals, controlled assignments, and zero auto-allocation. The system supports Admin, Manager, Technician, and Employee roles with a transparent, step-by-step workflow.
+---
 
-⸻
+## Key Features
 
-📌 Problem Statement
+### Maintenance Management
 
-In many organizations, maintenance requests are either auto-assigned or poorly tracked, leading to:
-	•	Lack of accountability
-	•	Overloaded technicians
-	•	No approval control
-	•	Poor visibility of new requests
+- **Role-Based Workflow**: Strict separation of duties between Admin, Manager, Technician, and Employee.
+- **No Auto-Assignment**: All requests require explicit Admin/Manager approval to ensure accountability.
+- **Request Lifecycle**: `Created` → `Pending Approval` → `Accepted` → `Assigned` → `In Progress` → `Completed`.
+- **Kanban Board**: Drag-and-drop interface for managing maintenance stages (Odoo-style).
+- **PDF Worksheets**: Generate and download printable worksheets for maintenance tasks.
 
-This system solves these issues by introducing admin-controlled approvals, assignment requests, and real-time visibility.
+### Equipment & Work Centers
 
-⸻
+- **Equipment Tracking**: Manage details, serial numbers, warranties, and categories.
+- **Smart Maintenance History**: View all maintenance requests linked to specific equipment directly from the detail page.
+- **Work Centers**: Organize equipment by location and responsible teams.
 
-🎯 Key Objectives
-	•	Prevent automatic assignment of requests
-	•	Ensure Admin control over request approval
-	•	Allow Employees & Technicians to request assignment
-	•	Enable Admin/Manager to approve assignments
-	•	Maintain a clear lifecycle for every request
+### Smart Dashboards
 
-⸻
+- **Admin**: Complete overview of all requests, approvals, and team workloads.
+- **Manager**: Focus on team assignments and active requests.
+- **Technician/Employee**: "My Requests" and "Assign to Me" capabilities.
+- **Skeleton Loading**: Polished UI with smooth loading states.
 
-👥 User Roles & Responsibilities
+---
 
-👨‍💼 Admin
-	•	View all maintenance requests
-	•	Accept or reject new requests
-	•	Approve or reject assignment requests
-	•	Assign requests to Manager, Technician, or Employee
+##  Tech Stack
 
-🧑‍💼 Manager
-	•	View accepted requests
-	•	Approve or reject assignment requests
-	•	Monitor and reassign work if needed
+### Backend (`/app`)
 
-👷 Technician
-	•	Create maintenance requests
-	•	Request assignment for unassigned tasks
-	•	Work on assigned requests and update status
+- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python)
+- **Database**: SQLite with [SQLAlchemy](https://www.sqlalchemy.org/) ORM
+- **Authentication**: OAuth2 with JWT Tokens
+- **PDF Generation**: ReportLab
 
-👨‍🔧 Employee
-	•	Create maintenance requests
-	•	Request assignment (if allowed)
-	•	Track status of their own requests
+### Frontend (`/web`)
 
-⸻
+- **Framework**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- **Language**: TypeScript
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: Lucide React
+- **HTTP Client**: Axios
 
-🔄 Request Lifecycle (Status Flow)
+---
 
-CREATED
-→ PENDING_APPROVAL
-→ ACCEPTED
-→ ASSIGNMENT_REQUESTED
-→ ASSIGNED
-→ IN_PROGRESS
-→ COMPLETED / REJECTED
+##  Project Structure
 
+```bash
+/project-root
+├── app/                  # Backend Application
+│   ├── routers/          # API Endpoints (auth, requests, equipment, etc.)
+│   ├── models.py         # Database Models
+│   ├── schemas.py        # Pydantic Schemas
+│   ├── database.py       # DB Connection & Session
+│   └── app.py            # Main Entry Point
+├── web/                  # Frontend Application
+│   ├── src/
+│   │   ├── pages/        # Views (Dashboard, Kanban, Details)
+│   │   ├── components/   # Reusable UI (Layout, Skeleton, Modal)
+│   │   ├── api.ts        # Axios setup
+│   │   └── context/      # Auth & Global State
+│   └── index.html
+└── README.md
+```
 
-⸻
+---
 
-📝 Step-by-Step Workflow
+## Setup & Installation
 
-1️⃣ Request Creation
-	•	Employee or Technician submits a maintenance request
-	•	Status set to PENDING_APPROVAL
-	•	Request visible only to Admin
+### Prerequisites
 
-⸻
+- Python 3.9+
+- Node.js 16+ & npm
 
-2️⃣ Admin Review
-	•	Admin reviews request details
-	•	Admin can:
-	•	✅ Accept → status becomes ACCEPTED
-	•	❌ Reject → status becomes REJECTED
+### 1. Backend Setup
 
-⚠️ No auto-assignment occurs after acceptance
+Navigate to the `app` directory (or root, depending on where you run it from).
 
-⸻
+```bash
+# Install dependencies
+pip install -r app/requirements.txt
 
-3️⃣ Assignment Request (Assign to Me)
-	•	Employees/Technicians see accepted but unassigned requests
-	•	User clicks Request Assign to Me
-	•	Status changes to ASSIGNMENT_REQUESTED
+# Run the server
+uvicorn app.app:app --reload
+```
 
-⸻
+*The backend API will run at `http://127.0.0.1:8000`*
+*Swagger Docs available at `http://127.0.0.1:8000/docs`*
 
-4️⃣ Assignment Approval
-	•	Admin or Manager reviews assignment request
-	•	Can:
-	•	✅ Approve & assign → status ASSIGNED
-	•	❌ Reject → status reverts to ACCEPTED
+### 2. Frontend Setup
 
-⸻
+Navigate to the `web` directory.
 
-5️⃣ Work Execution
-	•	Assigned user starts work → status IN_PROGRESS
-	•	After completion → status COMPLETED
+```bash
+cd web
 
-⸻
+# Install dependencies
+npm install
 
-🖥️ Dashboard Views
+# Run the development server
+npm run dev
+```
 
-Admin Dashboard
-	•	New Requests
-	•	Accepted Requests
-	•	Assignment Requests
-	•	Active Requests
-	•	Completed Requests
+*The frontend will run at `http://localhost:5173` (or similar)*
 
-Manager Dashboard
-	•	Assignment Requests
-	•	Active Requests
-	•	Team Workload Overview
+---
 
-Employee / Technician Dashboard
-	•	My Requests
-	•	Available Requests
-	•	Assignment Request Status
-	•	Completed Work
+## UI/UX Philosophy
 
-⸻
+This project adheres to a **"Clean & Functional"** design system inspired by ERPs like Odoo.
 
-🔐 Business Rules
-	•	❌ No automatic assignment
-	•	✅ Admin approval is mandatory
-	•	✅ Assignment requests require Admin/Manager approval
-	•	✅ One user assigned per request
-	•	✅ Role-based access & actions
-
-⸻
-
-💡 Why This System Works
-	•	Clear authority & accountability
-	•	Prevents misuse of self-assignment
-	•	Real-time visibility of requests
-	•	Scalable for large organizations
-	•	Audit-friendly workflow
-
-⸻
-
-📢 One-Line Summary
-
-“A controlled maintenance workflow where requests are approved by Admin and assignments are granted only after explicit authorization, ensuring transparency and accountability.”
-
-⸻
-
-🚀 Future Enhancements
-	•	Real-time notifications
-	•	SLA & priority escalation
-	•	Analytics dashboard
-	•	Mobile-first UI
-	•	File & image uploads
-
-⸻
-
-This README can be directly used for GitHub, hackathons, or internal documentation.
+- **Primary Color**: Odoo Purple (`#714B67`) & Teal (`#00A09D`)
+- **Layout**: consistent headers, breadcrumbs, and action bars.
+- **Feedback**: Skeleton loaders for perceived performance.
