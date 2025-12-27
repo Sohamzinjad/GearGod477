@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api';
 import { Plus, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Skeleton from '../components/Skeleton';
 
 interface Equipment {
     id: number;
@@ -23,31 +24,30 @@ export default function EquipmentPage() {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchEquipments();
-        fetchDropdowns();
+        fetchData();
     }, []);
 
-    const fetchEquipments = () => {
-        api.get('/equipments/')
-            .then(res => setEquipments(res.data))
-            .catch(err => console.error(err));
-    };
-
-    const fetchDropdowns = async () => {
+    const fetchData = async () => {
+        setLoading(true);
         try {
-            const [cats, usrs] = await Promise.all([
+            const [eqRes, catsRes, usrsRes] = await Promise.all([
+                api.get('/equipments/'),
                 api.get('/categories/'),
                 api.get('/auth/members')
             ]);
-            setCategories(cats.data);
-            setUsers(usrs.data);
+            setEquipments(eqRes.data);
+            setCategories(catsRes.data);
+            setUsers(usrsRes.data);
         } catch (e) {
-            console.error("Failed to fetch dropdowns", e);
+            console.error("Failed to fetch data", e);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     const getCategoryName = (id?: number) => categories.find(c => c.id === id)?.name || '-';
     const getUserName = (id?: string | number) => {
@@ -93,25 +93,41 @@ export default function EquipmentPage() {
                         </tr>
                     </thead>
                     <tbody className="options-y divide-gray-100">
-                        {equipments.map(eq => (
-                            <tr
-                                key={eq.id}
-                                onClick={() => navigate(`/equipment/${eq.id}`)}
-                                className="hover:bg-blue-50 cursor-pointer transition-colors"
-                            >
-                                <td className="px-6 py-3 font-medium text-gray-900">{eq.name}</td>
-                                <td className="px-6 py-3 text-gray-600">{getUserName(eq.employee_id)}</td>
-                                <td className="px-6 py-3 text-gray-600">{eq.serial_number}</td>
-                                <td className="px-6 py-3 text-gray-600">{getUserName(eq.default_technician_id)}</td>
-                                <td className="px-6 py-3 text-gray-600">{getCategoryName(eq.category_id)}</td>
-                                <td className="px-6 py-3">
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${eq.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                                        {eq.status}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-3 text-gray-600">My Company (San Francisco)</td>
-                            </tr>
-                        ))}
+                        {loading ? (
+                            Array(5).fill(0).map((_, i) => (
+                                <tr key={i}>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="70%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="60%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="50%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="60%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="50%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={24} width={80} className="rounded-full" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="80%" /></td>
+                                </tr>
+                            ))
+                        ) : (
+                            <>
+                                {equipments.map(eq => (
+                                    <tr
+                                        key={eq.id}
+                                        onClick={() => navigate(`/equipment/${eq.id}`)}
+                                        className="hover:bg-blue-50 cursor-pointer transition-colors"
+                                    >
+                                        <td className="px-6 py-3 font-medium text-gray-900">{eq.name}</td>
+                                        <td className="px-6 py-3 text-gray-600">{getUserName(eq.employee_id)}</td>
+                                        <td className="px-6 py-3 text-gray-600">{eq.serial_number}</td>
+                                        <td className="px-6 py-3 text-gray-600">{getUserName(eq.default_technician_id)}</td>
+                                        <td className="px-6 py-3 text-gray-600">{getCategoryName(eq.category_id)}</td>
+                                        <td className="px-6 py-3">
+                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${eq.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                {eq.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-3 text-gray-600">My Company (San Francisco)</td>
+                                    </tr>
+                                ))}
+                            </>
+                        )}
                     </tbody>
                 </table>
             </div>

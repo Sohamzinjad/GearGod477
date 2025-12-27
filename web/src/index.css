@@ -5,13 +5,15 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: #2563eb;
-  --secondary-color: #64748b;
-  --background-color: #f8fafc;
+  --primary-color: #714B67;
+  /* Odoo Purple */
+  --secondary-color: #00A09D;
+  /* Odoo Teal */
+  --background-color: #F9FAFB;
   --surface-color: #ffffff;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --border-color: #e2e8f0;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --border-color: #E5E7EB;
   --sidebar-width: 260px;
 }
 

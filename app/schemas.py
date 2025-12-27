@@ -129,6 +129,7 @@ class MaintenanceRequest(MaintenanceRequestBase):
     id: int
     category: Optional[Category] = None
     team: Optional[Team] = None
+    equipment: Optional[Equipment] = None
 
     class Config:
         from_attributes = True

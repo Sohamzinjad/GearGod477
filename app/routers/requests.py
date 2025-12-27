@@ -49,7 +49,11 @@ async def create_request(
     from sqlalchemy.orm import selectinload
     result = await db.execute(
         select(MaintenanceRequest)
-        .options(selectinload(MaintenanceRequest.category), selectinload(MaintenanceRequest.team))
+        .options(
+            selectinload(MaintenanceRequest.category), 
+            selectinload(MaintenanceRequest.team),
+            selectinload(MaintenanceRequest.equipment)
+        )
         .filter(MaintenanceRequest.id == db_request.id)
     )
     return result.scalar_one()
@@ -67,7 +71,8 @@ async def read_requests(
     
     query = select(MaintenanceRequest).options(
         selectinload(MaintenanceRequest.category),
-        selectinload(MaintenanceRequest.team)
+        selectinload(MaintenanceRequest.team),
+        selectinload(MaintenanceRequest.equipment)
     )
     if stage:
         query = query.filter(MaintenanceRequest.stage == stage)
@@ -84,7 +89,11 @@ async def read_request(request_id: int, db: AsyncSession = Depends(get_db)):
     from sqlalchemy.orm import selectinload
     result = await db.execute(
         select(MaintenanceRequest)
-        .options(selectinload(MaintenanceRequest.category), selectinload(MaintenanceRequest.team))
+        .options(
+            selectinload(MaintenanceRequest.category), 
+            selectinload(MaintenanceRequest.team),
+            selectinload(MaintenanceRequest.equipment)
+        )
         .filter(MaintenanceRequest.id == request_id)
     )
     db_request = result.scalar_one_or_none()
@@ -133,7 +142,11 @@ async def update_request(request_id: int, request_update: MaintenanceRequestUpda
     from sqlalchemy.orm import selectinload
     result = await db.execute(
         select(MaintenanceRequest)
-        .options(selectinload(MaintenanceRequest.category), selectinload(MaintenanceRequest.team))
+        .options(
+            selectinload(MaintenanceRequest.category), 
+            selectinload(MaintenanceRequest.team),
+            selectinload(MaintenanceRequest.equipment)
+        )
         .filter(MaintenanceRequest.id == request_id)
     )
     return result.scalar_one()
@@ -155,7 +168,8 @@ async def download_worksheet(request_id: int, db: AsyncSession = Depends(get_db)
         select(MaintenanceRequest)
         .options(
             selectinload(MaintenanceRequest.category), 
-            selectinload(MaintenanceRequest.team)
+            selectinload(MaintenanceRequest.team),
+            selectinload(MaintenanceRequest.equipment)
         )
         .filter(MaintenanceRequest.id == request_id)
     )

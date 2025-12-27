@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../api';
 import { Plus, Search } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import Skeleton from '../components/Skeleton';
 
 interface Category { id: number; name: string; }
 interface Team { id: number; name: string; }
@@ -25,29 +26,33 @@ interface User { id: number; name: string; }
 export default function RequestsPage() {
     const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
     const [users, setUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
     const equipmentId = searchParams.get('equipment_id');
 
     useEffect(() => {
-        fetchRequests();
-        fetchUsers();
+        fetchData();
     }, [equipmentId]);
 
-    const fetchRequests = () => {
+    const fetchData = async () => {
+        setLoading(true);
         const params: any = {};
         if (equipmentId) params.equipment_id = equipmentId;
 
-        api.get('/requests/', { params })
-            .then(res => setRequests(res.data))
-            .catch(err => console.error(err));
-    };
-
-    const fetchUsers = () => {
-        api.get('/auth/members')
-            .then(res => setUsers(res.data))
-            .catch(err => console.error(err));
+        try {
+            const [reqRes, userRes] = await Promise.all([
+                api.get('/requests/', { params }),
+                api.get('/auth/members')
+            ]);
+            setRequests(reqRes.data);
+            setUsers(userRes.data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const getUserName = (id?: string | number) => {
@@ -98,28 +103,43 @@ export default function RequestsPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                        {requests.map(req => (
-                            <tr
-                                key={req.id}
-                                onClick={() => navigate(`/requests/${req.id}`)}
-                                className="hover:bg-blue-50 cursor-pointer transition-colors"
-                            >
-                                <td className="px-6 py-3 font-medium text-gray-900">{req.subject}</td>
-                                <td className="px-6 py-3 text-gray-600">{getUserName(req.created_by_id)}</td>
-                                <td className="px-6 py-3 text-gray-600">{getUserName(req.technician_id)}</td>
-                                <td className="px-6 py-3 text-gray-600">{req.category?.name || '-'}</td>
-                                <td className="px-6 py-3">
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${req.stage === 'New Request' ? 'bg-blue-100 text-blue-700' :
-                                        req.stage === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
-                                            req.stage === 'Repaired' ? 'bg-green-100 text-green-700' :
-                                                'bg-gray-100 text-gray-600'
-                                        }`}>
-                                        {req.stage}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-3 text-gray-600">{req.company || 'My Company (San Francisco)'}</td>
-                            </tr>
-                        ))}
+                        {loading ? (
+                            Array(5).fill(0).map((_, i) => (
+                                <tr key={i}>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="80%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="60%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="60%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="50%" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={24} width={80} className="rounded-full" /></td>
+                                    <td className="px-6 py-4"><Skeleton height={20} width="70%" /></td>
+                                </tr>
+                            ))
+                        ) : (
+                            <>
+                                {requests.map(req => (
+                                    <tr
+                                        key={req.id}
+                                        onClick={() => navigate(`/requests/${req.id}`)}
+                                        className="hover:bg-blue-50 cursor-pointer transition-colors"
+                                    >
+                                        <td className="px-6 py-3 font-medium text-gray-900">{req.subject}</td>
+                                        <td className="px-6 py-3 text-gray-600">{getUserName(req.created_by_id)}</td>
+                                        <td className="px-6 py-3 text-gray-600">{getUserName(req.technician_id)}</td>
+                                        <td className="px-6 py-3 text-gray-600">{req.category?.name || '-'}</td>
+                                        <td className="px-6 py-3">
+                                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${req.stage === 'New Request' ? 'bg-blue-100 text-blue-700' :
+                                                req.stage === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
+                                                    req.stage === 'Repaired' ? 'bg-green-100 text-green-700' :
+                                                        'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                {req.stage}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-3 text-gray-600">{req.company || 'My Company (San Francisco)'}</td>
+                                    </tr>
+                                ))}
+                            </>
+                        )}
                     </tbody>
                 </table>
             </div>
