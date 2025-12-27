@@ -2,18 +2,29 @@ import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { Plus, Search, Tag } from 'lucide-react';
 
+
+interface User { id: number; name: string; }
+
 interface Category {
     id: number;
     name: string;
+    responsible_id?: number;
+    company_name?: string;
 }
 
 export default function CategoriesPage() {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [showCreate, setShowCreate] = useState(false);
+
+    // Form State
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [responsibleId, setResponsibleId] = useState('');
+    const [companyName, setCompanyName] = useState('My Company (San Francisco)');
 
     useEffect(() => {
         fetchCategories();
+        fetchUsers();
     }, []);
 
     const fetchCategories = () => {
@@ -22,17 +33,32 @@ export default function CategoriesPage() {
             .catch(err => console.error(err));
     };
 
+    const fetchUsers = () => {
+        api.get('/auth/members')
+            .then(res => setUsers(res.data))
+            .catch(err => console.error(err));
+    };
+
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/categories/', { name: newCategoryName });
+            await api.post('/categories/', {
+                name: newCategoryName,
+                responsible_id: responsibleId ? parseInt(responsibleId) : null,
+                company_name: companyName
+            });
             fetchCategories();
             setShowCreate(false);
             setNewCategoryName('');
+            setResponsibleId('');
+            setCompanyName('My Company (San Francisco)');
         } catch (err) {
             console.error("Failed to create category", err);
         }
     };
+
+    // Helper to get user name
+    const getUserName = (id?: number) => users.find(u => u.id === id)?.name || 'Mitchell Admin'; // Fallback for display if ID missing
 
     return (
         <div className="h-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -74,8 +100,8 @@ export default function CategoriesPage() {
                                     <Tag size={16} className="text-gray-400" />
                                     {cat.name}
                                 </td>
-                                <td className="px-6 py-3 text-gray-600">Mitchell Admin</td>
-                                <td className="px-6 py-3 text-gray-600">My Company (San Francisco)</td>
+                                <td className="px-6 py-3 text-gray-600">{getUserName(cat.responsible_id)}</td>
+                                <td className="px-6 py-3 text-gray-600">{cat.company_name || 'My Company (San Francisco)'}</td>
                             </tr>
                         ))}
                         {categories.length === 0 && (
@@ -103,6 +129,26 @@ export default function CategoriesPage() {
                                     value={newCategoryName}
                                     onChange={e => setNewCategoryName(e.target.value)}
                                     placeholder="e.g. Computers"
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Responsible</label>
+                                <select
+                                    className="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                                    value={responsibleId}
+                                    onChange={e => setResponsibleId(e.target.value)}
+                                >
+                                    <option value="">Select User...</option>
+                                    {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+                                </select>
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                                <input
+                                    className="w-full border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    value={companyName}
+                                    onChange={e => setCompanyName(e.target.value)}
+                                    placeholder="Company Name"
                                 />
                             </div>
                             <div className="flex justify-end gap-2">

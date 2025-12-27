@@ -16,10 +16,12 @@ interface Equipment {
 interface Category { id: number; name: string; }
 interface Team { id: number; name: string; }
 
+interface User { id: number; name: string; }
+
 export default function EquipmentPage() {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
-    // const [teams, setTeams] = useState<Team[]>([]); //  Removed unused state
+    const [users, setUsers] = useState<User[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,19 +37,22 @@ export default function EquipmentPage() {
 
     const fetchDropdowns = async () => {
         try {
-            const [cats, tms] = await Promise.all([
+            const [cats, usrs] = await Promise.all([
                 api.get('/categories/'),
-                api.get('/teams/')
+                api.get('/auth/members')
             ]);
             setCategories(cats.data);
-            // setTeams(tms.data);
+            setUsers(usrs.data);
         } catch (e) {
             console.error("Failed to fetch dropdowns", e);
         }
     }
 
     const getCategoryName = (id?: number) => categories.find(c => c.id === id)?.name || '-';
-    // const getTeamName = (id?: number) => teams.find(t => t.id === id)?.name || '-';
+    const getUserName = (id?: string | number) => {
+        if (!id) return '-';
+        return users.find(u => u.id === parseInt(String(id)))?.name || '-';
+    };
 
     return (
         <div className="equipment-page h-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -94,7 +99,7 @@ export default function EquipmentPage() {
                                 className="hover:bg-blue-50 cursor-pointer transition-colors"
                             >
                                 <td className="px-6 py-3 font-medium text-gray-900">{eq.name}</td>
-                                <td className="px-6 py-3 text-gray-600">{eq.employee_id || '-'}</td>
+                                <td className="px-6 py-3 text-gray-600">{getUserName(eq.employee_id)}</td>
                                 <td className="px-6 py-3 text-gray-600">{eq.serial_number}</td>
                                 <td className="px-6 py-3 text-gray-600">Mitchell Admin</td>
                                 <td className="px-6 py-3 text-gray-600">{getCategoryName(eq.category_id)}</td>

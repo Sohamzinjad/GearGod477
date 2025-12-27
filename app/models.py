@@ -33,8 +33,11 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    responsible_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    company_name = Column(String, default="My Company (San Francisco)")
     
     equipments = relationship("Equipment", back_populates="category")
+    responsible = relationship("User", foreign_keys=[responsible_id])
 
 
 class Team(Base):
@@ -71,16 +74,17 @@ class Equipment(Base):
     name = Column(String, index=True)
     serial_number = Column(String, unique=True, index=True)
     department = Column(String)
-    default_technician_id = Column(String) # Placeholder for Technician User ID
+    default_technician_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Now Integer FK
     status = Column(Enum(EquipmentStatus, values_callable=lambda obj: [e.value for e in obj]), default=EquipmentStatus.ACTIVE)
     
     # New Fields
-    employee_id = Column(String, nullable=True) # Owner/Employee
+    employee_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Now Integer FK
     assign_date = Column(Date, nullable=True)
     scrap_date = Column(Date, nullable=True)
     purchase_date = Column(Date, nullable=True)
     warranty_date = Column(Date, nullable=True)
     location = Column(String, nullable=True)
+    company_name = Column(String, nullable=True)
     
     category_id = Column(Integer, ForeignKey("categories.id"))
     team_id = Column(Integer, ForeignKey("teams.id"))
@@ -90,6 +94,10 @@ class Equipment(Base):
     team = relationship("Team", back_populates="equipments")
     work_center = relationship("WorkCenter", back_populates="equipments")
     requests = relationship("MaintenanceRequest", back_populates="equipment")
+    
+    # User Relationships
+    default_technician = relationship("User", foreign_keys=[default_technician_id])
+    employee = relationship("User", foreign_keys=[employee_id])
 
 
 class MaintenanceRequest(Base):
@@ -100,7 +108,7 @@ class MaintenanceRequest(Base):
     request_date = Column(Date)
     scheduled_date = Column(Date)
     duration = Column(Float) # Hours
-    technician_id = Column(String) # Placeholder for Technician User ID
+    technician_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Now Integer FK
     
     maintenance_type = Column(Enum(MaintenanceType), default=MaintenanceType.CORRECTIVE)
     priority = Column(Enum(Priority), default=Priority.LOW)
@@ -122,11 +130,14 @@ class MaintenanceRequest(Base):
     work_center = relationship("WorkCenter", back_populates="requests")
     team = relationship("Team", back_populates="requests")
     category = relationship("Category") 
+    
+    technician = relationship("User", foreign_keys=[technician_id])
 
 
 class UserRole(str, enum.Enum):
     ADMIN = "Admin"
     TECHNICIAN = "Technician"
+    MANAGER = "Manager"
     USER = "User"
 
 class User(Base):

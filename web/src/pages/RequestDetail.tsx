@@ -160,6 +160,7 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                 equipment_id: formData.equipment_id ? parseInt(String(formData.equipment_id)) : null,
                 work_center_id: formData.work_center_id ? parseInt(String(formData.work_center_id)) : null,
                 team_id: formData.team_id ? parseInt(String(formData.team_id)) : null,
+                technician_id: formData.technician_id ? parseInt(String(formData.technician_id)) : null,
                 category_id: formData.category_id ? parseInt(String(formData.category_id)) : null,
                 duration: parseFloat(String(formData.duration)),
                 scheduled_date: formData.scheduled_date ? formData.scheduled_date.split('T')[0] : null,
@@ -336,24 +337,26 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                             <div className="col-span-2 flex gap-2">
                                 <select className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.technician_id} onChange={e => setFormData({ ...formData, technician_id: e.target.value })}>
                                     <option value="">Select Technician...</option>
-                                    {technicians.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                                    {technicians.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        if (user) {
-                                            const updates: any = { ...formData, technician_id: user.name };
-                                            if (user.team_id) {
-                                                updates.team_id = String(user.team_id);
+                                {user?.team_id && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (user) {
+                                                const updates: any = { ...formData, technician_id: String(user.id) };
+                                                if (user.team_id) {
+                                                    updates.team_id = String(user.team_id);
+                                                }
+                                                setFormData(updates);
                                             }
-                                            setFormData(updates);
-                                        }
-                                    }}
-                                    className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded whitespace-nowrap"
-                                    title={user ? `Assign to ${user.name}` : "Log in to assign"}
-                                >
-                                    Assign to Me
-                                </button>
+                                        }}
+                                        className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded whitespace-nowrap"
+                                        title={`Assign to ${user.name}`}
+                                    >
+                                        Assign to Me
+                                    </button>
+                                )}
                             </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">

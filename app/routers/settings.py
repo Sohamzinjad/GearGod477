@@ -12,7 +12,11 @@ router = APIRouter()
 # Category Endpoints
 @router.post("/categories/", response_model=CategorySchema)
 async def create_category(category: CategoryCreate, db: AsyncSession = Depends(get_db)):
-    db_category = Category(name=category.name)
+    db_category = Category(
+        name=category.name,
+        responsible_id=category.responsible_id,
+        company_name=category.company_name
+    )
     db.add(db_category)
     await db.commit()
     await db.refresh(db_category)

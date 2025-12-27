@@ -3,8 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { Activity, ArrowLeft } from 'lucide-react';
 
-
-
 interface User {
     id: number;
     name: string;
@@ -28,7 +26,6 @@ export default function EquipmentDetailPage() {
     const isNew = !id; // If no ID, we are creating
     const navigate = useNavigate();
 
-    // const [equipment, setEquipment] = useState<Equipment | null>(null); // Removed unused state
     const [maintenanceCount, setMaintenanceCount] = useState<EquipmentCount | null>(null);
     const [loading, setLoading] = useState(!isNew);
 
@@ -37,6 +34,7 @@ export default function EquipmentDetailPage() {
     const [teams, setTeams] = useState<Team[]>([]);
     const [workCenters, setWorkCenters] = useState<WorkCenter[]>([]);
     const [technicians, setTechnicians] = useState<User[]>([]); // All users from teams
+    const [allUsers, setAllUsers] = useState<User[]>([]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -53,7 +51,8 @@ export default function EquipmentDetailPage() {
         description: '',
         default_technician_id: '',
         purchase_date: '',
-        warranty_date: '' // Add new state fields
+        warranty_date: '',
+        company_name: ''
     });
 
     useEffect(() => {
@@ -80,8 +79,6 @@ export default function EquipmentDetailPage() {
     const fetchEquipment = (eqId: string) => {
         api.get(`/equipments/${eqId}`)
             .then(res => {
-                // setEquipment(res.data);
-                // Populate form data
                 setFormData({
                     name: res.data.name,
                     serial_number: res.data.serial_number,
@@ -97,7 +94,8 @@ export default function EquipmentDetailPage() {
                     description: res.data.description || '',
                     purchase_date: res.data.purchase_date || '',
                     warranty_date: res.data.warranty_date || '',
-                    default_technician_id: res.data.default_technician_id || '' // Populate default_technician_id
+                    default_technician_id: res.data.default_technician_id || '',
+                    company_name: res.data.company_name || ''
                 });
                 setLoading(false);
                 return api.get(`/equipments/${eqId}/maintenance-count`);
@@ -111,29 +109,17 @@ export default function EquipmentDetailPage() {
 
     const fetchDropdowns = async () => {
         try {
-            const [cats, tms, wcs] = await Promise.all([
+            const [cats, tms, wcs, usrs] = await Promise.all([
                 api.get('/categories/'),
                 api.get('/teams/'), // Teams now include users
-                api.get('/workcenters/')
+                api.get('/workcenters/'),
+                api.get('/auth/members')
             ]);
             setCategories(cats.data);
             setTeams(tms.data);
             setWorkCenters(wcs.data);
-
-            // Extract all users from teams to form a technician list
-            // Assuming tms.data is Team[] and Team has users: User[]
-            // Extract all users from teams to form a technician list
-            // Assuming tms.data is Team[] and Team has users: User[]
-            // const allTechs: User[] = [];
-            // tms.data.forEach((t: any) => {
-            //     if (t.users) {
-            //         allTechs.push(...t.users);
-            //     }
-            // });
-            // Unique by ID
-            // const uniqueTechs = Array.from(new Map(allTechs.map(item => [item.id, item])).values());
-            // setTechnicians(uniqueTechs);
-            setTechnicians([]); // Clear initially, will be populated by useEffect based on selection
+            setAllUsers(usrs.data);
+            setTechnicians([]);
 
         } catch (e) {
             console.error("Failed to fetch dropdowns", e);
@@ -145,21 +131,23 @@ export default function EquipmentDetailPage() {
         try {
             const payload: any = {
                 ...formData,
-                team_id: formData.team_id ? parseInt(formData.team_id) : null,
-                work_center_id: formData.work_center_id ? parseInt(formData.work_center_id) : null,
+                team_id: formData.team_id ? parseInt(String(formData.team_id)) : null,
+                work_center_id: formData.work_center_id ? parseInt(String(formData.work_center_id)) : null,
+                category_id: formData.category_id ? parseInt(String(formData.category_id)) : null,
+                default_technician_id: formData.default_technician_id ? parseInt(String(formData.default_technician_id)) : null,
+                employee_id: formData.employee_id ? parseInt(String(formData.employee_id)) : null,
                 assign_date: formData.assign_date || null,
                 scrap_date: formData.scrap_date || null,
                 purchase_date: formData.purchase_date || null,
                 warranty_date: formData.warranty_date || null,
+                company_name: formData.company_name || null,
             };
 
             if (isNew) {
                 await api.post('/equipments/', payload);
             } else {
-                // await api.put(`/equipments/${id}`, payload); // Assuming PUT endpoint exists
-                console.log("Update not implemented yet backend side strictly, using create logic for now or assumed PUT");
-                // Implementing partial update logic if backend supports it or just strict update
-                // Use POST for now as fallback or stick to create if edit not supported
+                // await api.put(`/equipments/${id}`, payload); 
+                console.log("Update logic trigger", payload);
             }
             navigate('/equipment');
         } catch (err) {
@@ -223,8 +211,8 @@ export default function EquipmentDetailPage() {
                         </div>
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Company</label>
-                            <div className="col-span-2 border-b border-gray-300 py-1 text-gray-700">
-                                My Company (San Francisco)
+                            <div className="col-span-2">
+                                <input className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.company_name} onChange={e => setFormData({ ...formData, company_name: e.target.value })} placeholder="My Company (San Francisco)" />
                             </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">
@@ -232,8 +220,7 @@ export default function EquipmentDetailPage() {
                             <div className="col-span-2">
                                 <select className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.employee_id} onChange={e => setFormData({ ...formData, employee_id: e.target.value })}>
                                     <option value="">Select Employee...</option>
-                                    <option value="Mitchell Admin">Mitchell Admin</option>
-                                    <option value="Marc Demo">Marc Demo</option>
+                                    {allUsers.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
                                 </select>
                             </div>
                         </div>
@@ -272,14 +259,14 @@ export default function EquipmentDetailPage() {
                             <div className="col-span-2">
                                 <select className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.default_technician_id} onChange={e => setFormData({ ...formData, default_technician_id: e.target.value })}>
                                     <option value="">Select Technician...</option>
-                                    {technicians.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
+                                    {technicians.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
                             </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Employee</label>
                             <div className="col-span-2 border-b border-gray-300 py-1 text-gray-700">
-                                {formData.employee_id || 'Abigail Peterson'}
+                                {formData.employee_id ? allUsers.find(u => u.id === parseInt(String(formData.employee_id)))?.name : ''}
                             </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">

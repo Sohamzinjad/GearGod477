@@ -6,13 +6,17 @@ from app.models import MaintenanceType, Priority, RequestStage, EquipmentStatus,
 # Category Schemas
 class CategoryBase(BaseModel):
     name: str
+    responsible_id: Optional[int] = None
+    company_name: Optional[str] = "My Company (San Francisco)"
 
 class CategoryCreate(CategoryBase):
     pass
 
 class Category(CategoryBase):
     id: int
-
+    
+    # We might want to return the User object too if needed, but ID is fine for now
+    
     class Config:
         from_attributes = True
 
@@ -53,19 +57,20 @@ class EquipmentBase(BaseModel):
     name: str
     serial_number: str
     department: Optional[str] = None
-    default_technician_id: Optional[str] = None
+    default_technician_id: Optional[int] = None
     status: Optional[EquipmentStatus] = EquipmentStatus.ACTIVE
     category_id: Optional[int] = None
     team_id: Optional[int] = None
     
     # New Fields
-    employee_id: Optional[str] = None
+    employee_id: Optional[int] = None
     assign_date: Optional[date] = None
     scrap_date: Optional[date] = None
     purchase_date: Optional[date] = None
     warranty_date: Optional[date] = None
     location: Optional[str] = None
     work_center_id: Optional[int] = None
+    company_name: Optional[str] = None
 
 class EquipmentCreate(EquipmentBase):
     pass
@@ -82,7 +87,7 @@ class MaintenanceRequestBase(BaseModel):
     request_date: date
     scheduled_date: Optional[date] = None
     duration: Optional[float] = 0.0
-    technician_id: Optional[str] = None
+    technician_id: Optional[int] = None
     maintenance_type: Optional[MaintenanceType] = MaintenanceType.CORRECTIVE
     priority: Optional[Priority] = Priority.LOW
     stage: Optional[RequestStage] = RequestStage.NEW_REQUEST
@@ -105,7 +110,7 @@ class MaintenanceRequestUpdate(BaseModel):
     request_date: Optional[date] = None
     scheduled_date: Optional[date] = None
     duration: Optional[float] = None
-    technician_id: Optional[str] = None
+    technician_id: Optional[int] = None
     maintenance_type: Optional[MaintenanceType] = None
     priority: Optional[Priority] = None
     stage: Optional[RequestStage] = None
