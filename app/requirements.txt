@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+httpx
+pydantic
+sqlalchemy
+asyncpg
+python-multipart
+python-dotenv
+pydantic-settings
