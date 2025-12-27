@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
 import { Plus, Search } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+
+interface Category { id: number; name: string; }
+interface Team { id: number; name: string; }
 
 interface MaintenanceRequest {
     id: number;
@@ -10,8 +13,9 @@ interface MaintenanceRequest {
     stage: string;
     maintenance_for: 'Equipment' | 'Work Center';
     employee?: string;
-    technician?: string;
-    category?: string;
+    technician_id?: string;
+    category?: Category;
+    team?: Team;
     company?: string;
 }
 
@@ -19,17 +23,21 @@ export default function RequestsPage() {
     const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
     const navigate = useNavigate();
 
+    const [searchParams] = useSearchParams();
+    const equipmentId = searchParams.get('equipment_id');
+
     useEffect(() => {
         fetchRequests();
-    }, []);
+    }, [equipmentId]);
 
-    const fetchRequests = () => api.get('/dashboard/recent_requests') // Use the detailed endpoint or /requests/ if updated
-        .then(res => setRequests(res.data))
-        .catch(err => console.error(err));
-    // Alternatively use /requests/ but we need detailed info for the columns.
-    // Let's rely on dashboard/recent_requests for now or assume /requests/ returns minimal
-    // Actually /requests/ might just return standard fields. Let's stick to /requests/ and update backend if needed.
-    // Or re-use recent_requests pattern for now since it has the JOINed text.
+    const fetchRequests = () => {
+        const params: any = {};
+        if (equipmentId) params.equipment_id = equipmentId;
+
+        api.get('/requests/', { params })
+            .then(res => setRequests(res.data))
+            .catch(err => console.error(err));
+    };
 
     return (
         <div className="requests-page h-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -76,8 +84,8 @@ export default function RequestsPage() {
                             >
                                 <td className="px-6 py-3 font-medium text-gray-900">{req.subject}</td>
                                 <td className="px-6 py-3 text-gray-600">{req.employee || 'Mitchell Admin'}</td>
-                                <td className="px-6 py-3 text-gray-600">{req.technician || 'Mitchell Admin'}</td>
-                                <td className="px-6 py-3 text-gray-600">{req.category || '-'}</td>
+                                <td className="px-6 py-3 text-gray-600">{req.technician_id || '-'}</td>
+                                <td className="px-6 py-3 text-gray-600">{req.category?.name || '-'}</td>
                                 <td className="px-6 py-3">
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${req.stage === 'New Request' ? 'bg-blue-100 text-blue-700' :
                                         req.stage === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :

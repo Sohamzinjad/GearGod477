@@ -25,14 +25,12 @@ export default function Dashboard() {
     const [recentRequests, setRecentRequests] = useState<RecentRequest[]>([]);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        api.get('/dashboard/stats')
-            .then(res => setStats(res.data))
-            .catch(err => console.error("Failed to fetch dashboard stats", err));
+    const [reports, setReports] = useState<{ requests_per_team: { name: string, count: number }[], requests_per_category: { name: string, count: number }[] } | null>(null);
 
-        api.get('/dashboard/recent_requests')
-            .then(res => setRecentRequests(res.data))
-            .catch(err => console.error("Failed to fetch recent requests", err));
+    useEffect(() => {
+        api.get('/dashboard/stats').then(res => setStats(res.data));
+        api.get('/dashboard/recent_requests').then(res => setRecentRequests(res.data));
+        api.get('/dashboard/reports').then(res => setReports(res.data));
     }, []);
 
     if (!stats) return <div className="p-8">Loading dashboard...</div>;
@@ -59,6 +57,57 @@ export default function Dashboard() {
 
                 <div className="w-16"></div> {/* Spacer to center search visually if needed */}
             </div>
+
+            {/* Reports Section */}
+            {
+                reports && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        {/* Team Report */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <h3 className="text-lg font-bold text-gray-800 mb-4">Requests per Team</h3>
+                            <div className="space-y-3">
+                                {reports.requests_per_team.map(item => (
+                                    <div key={item.name} className="flex flex-col">
+                                        <div className="flex justify-between text-sm mb-1">
+                                            <span className="font-medium text-gray-700">{item.name}</span>
+                                            <span className="text-gray-500">{item.count}</span>
+                                        </div>
+                                        <div className="w-full bg-gray-100 rounded-full h-2">
+                                            <div
+                                                className="bg-blue-600 h-2 rounded-full"
+                                                style={{ width: `${Math.min((item.count / 10) * 100, 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                                {reports.requests_per_team.length === 0 && <p className="text-gray-400 text-sm">No data available</p>}
+                            </div>
+                        </div>
+
+                        {/* Category Report */}
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                            <h3 className="text-lg font-bold text-gray-800 mb-4">Requests per Category</h3>
+                            <div className="space-y-3">
+                                {reports.requests_per_category.map(item => (
+                                    <div key={item.name} className="flex flex-col">
+                                        <div className="flex justify-between text-sm mb-1">
+                                            <span className="font-medium text-gray-700">{item.name}</span>
+                                            <span className="text-gray-500">{item.count}</span>
+                                        </div>
+                                        <div className="w-full bg-gray-100 rounded-full h-2">
+                                            <div
+                                                className="bg-purple-600 h-2 rounded-full"
+                                                style={{ width: `${Math.min((item.count / 10) * 100, 100)}%` }} // Scaling for demo
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                                {reports.requests_per_category.length === 0 && <p className="text-gray-400 text-sm">No data available</p>}
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {/* Critical Equipment */}
@@ -133,6 +182,6 @@ export default function Dashboard() {
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

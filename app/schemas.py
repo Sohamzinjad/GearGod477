@@ -62,6 +62,8 @@ class EquipmentBase(BaseModel):
     employee_id: Optional[str] = None
     assign_date: Optional[date] = None
     scrap_date: Optional[date] = None
+    purchase_date: Optional[date] = None
+    warranty_date: Optional[date] = None
     location: Optional[str] = None
     work_center_id: Optional[int] = None
 
@@ -119,6 +121,8 @@ class MaintenanceRequestUpdate(BaseModel):
 
 class MaintenanceRequest(MaintenanceRequestBase):
     id: int
+    category: Optional[Category] = None
+    team: Optional[Team] = None
 
     class Config:
         from_attributes = True
@@ -132,6 +136,14 @@ class DashboardStats(BaseModel):
     critical_equipment_count: int
     technician_load: int
     open_requests_count: int
+
+class ReportItem(BaseModel):
+    name: str
+    count: int
+
+class DashboardReports(BaseModel):
+    requests_per_team: List[ReportItem]
+    requests_per_category: List[ReportItem]
 
 # User Schemas
 class UserBase(BaseModel):

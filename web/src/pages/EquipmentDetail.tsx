@@ -51,7 +51,9 @@ export default function EquipmentDetailPage() {
         assign_date: '',
         scrap_date: '',
         description: '',
-        default_technician_id: '' // Add default_technician_id
+        default_technician_id: '',
+        purchase_date: '',
+        warranty_date: '' // Add new state fields
     });
 
     useEffect(() => {
@@ -93,6 +95,8 @@ export default function EquipmentDetailPage() {
                     assign_date: res.data.assign_date || '',
                     scrap_date: res.data.scrap_date || '',
                     description: res.data.description || '',
+                    purchase_date: res.data.purchase_date || '',
+                    warranty_date: res.data.warranty_date || '',
                     default_technician_id: res.data.default_technician_id || '' // Populate default_technician_id
                 });
                 setLoading(false);
@@ -145,6 +149,8 @@ export default function EquipmentDetailPage() {
                 work_center_id: formData.work_center_id ? parseInt(formData.work_center_id) : null,
                 assign_date: formData.assign_date || null,
                 scrap_date: formData.scrap_date || null,
+                purchase_date: formData.purchase_date || null,
+                warranty_date: formData.warranty_date || null,
             };
 
             if (isNew) {
@@ -177,7 +183,10 @@ export default function EquipmentDetailPage() {
                 </div>
                 {!isNew && maintenanceCount && (
                     <div className="flex gap-2">
-                        <button className="flex items-center gap-3 px-3 py-1 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+                        <button
+                            onClick={() => navigate(`/requests?equipment_id=${id}`)}
+                            className="flex items-center gap-3 px-3 py-1 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
                             <Activity size={18} className="text-blue-600" />
                             <div className="flex flex-col items-start leading-none">
                                 <span className="text-sm font-bold text-gray-900">{maintenanceCount.total}</span>
@@ -235,6 +244,18 @@ export default function EquipmentDetailPage() {
                                     <option value="">Select Team...</option>
                                     {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-3 items-center">
+                            <label className="text-sm font-medium text-gray-600">Purchase Date</label>
+                            <div className="col-span-2">
+                                <input type="date" className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.purchase_date} onChange={e => setFormData({ ...formData, purchase_date: e.target.value })} />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-3 items-center">
+                            <label className="text-sm font-medium text-gray-600">Warranty Expiration</label>
+                            <div className="col-span-2">
+                                <input type="date" className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.warranty_date} onChange={e => setFormData({ ...formData, warranty_date: e.target.value })} />
                             </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">

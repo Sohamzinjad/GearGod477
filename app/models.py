@@ -78,6 +78,8 @@ class Equipment(Base):
     employee_id = Column(String, nullable=True) # Owner/Employee
     assign_date = Column(Date, nullable=True)
     scrap_date = Column(Date, nullable=True)
+    purchase_date = Column(Date, nullable=True)
+    warranty_date = Column(Date, nullable=True)
     location = Column(String, nullable=True)
     
     category_id = Column(Integer, ForeignKey("categories.id"))

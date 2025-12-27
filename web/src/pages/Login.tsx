@@ -41,7 +41,13 @@ export default function Login() {
             }).join(''));
             const payload = JSON.parse(jsonPayload);
 
-            login(token, { id: payload.id, email: payload.sub, name: payload.sub, role: payload.role });
+            login(token, {
+                id: payload.id,
+                email: payload.sub,
+                name: payload.name || payload.sub,
+                role: payload.role,
+                team_id: payload.team_id
+            });
             navigate('/');
         } catch (err) {
             setError('Invalid credentials');

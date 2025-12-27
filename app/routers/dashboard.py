@@ -5,10 +5,33 @@ from sqlalchemy import func
 from datetime import date
 
 from app.database import get_db
-from app.models import MaintenanceRequest, Equipment, RequestStage, MaintenanceType
-from app.schemas import DashboardStats
+from app.models import MaintenanceRequest, Equipment, RequestStage, MaintenanceType, Team, Category
+from app.schemas import DashboardStats, DashboardReports, ReportItem
 
 router = APIRouter()
+
+@router.get("/dashboard/reports", response_model=DashboardReports)
+async def get_dashboard_reports(db: AsyncSession = Depends(get_db)):
+    # Requests per Team
+    # We join Team to ensure we get team names even if count is 0? SQL Group By usually gets present ones.
+    team_query = (
+        select(Team.name, func.count(MaintenanceRequest.id))
+        .join(MaintenanceRequest, Team.id == MaintenanceRequest.team_id)
+        .group_by(Team.name)
+    )
+    result_team = await db.execute(team_query)
+    teams = [ReportItem(name=row[0], count=row[1]) for row in result_team]
+
+    # Requests per Category
+    cat_query = (
+        select(Category.name, func.count(MaintenanceRequest.id))
+        .join(MaintenanceRequest, Category.id == MaintenanceRequest.category_id)
+        .group_by(Category.name)
+    )
+    result_cat = await db.execute(cat_query)
+    cats = [ReportItem(name=row[0], count=row[1]) for row in result_cat]
+    
+    return DashboardReports(requests_per_team=teams, requests_per_category=cats)
 
 @router.get("/dashboard/stats", response_model=DashboardStats)
 async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):

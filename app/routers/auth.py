@@ -39,7 +39,13 @@ async def login(user: UserLogin, db: AsyncSession = Depends(get_db)):
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
-    access_token = create_access_token(data={"sub": db_user.email, "id": db_user.id, "role": db_user.role.value})
+    access_token = create_access_token(data={
+        "sub": db_user.email, 
+        "id": db_user.id, 
+        "role": db_user.role.value,
+        "name": db_user.name,
+        "team_id": db_user.team_id
+    })
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/members", response_model=List[UserResponse])

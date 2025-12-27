@@ -48,7 +48,12 @@ async def read_requests(
     work_center_id: Optional[int] = None,
     db: AsyncSession = Depends(get_db)
 ):
-    query = select(MaintenanceRequest)
+    from sqlalchemy.orm import selectinload
+    
+    query = select(MaintenanceRequest).options(
+        selectinload(MaintenanceRequest.category),
+        selectinload(MaintenanceRequest.team)
+    )
     if stage:
         query = query.filter(MaintenanceRequest.stage == stage)
     if equipment_id:

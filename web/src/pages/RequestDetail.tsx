@@ -38,10 +38,13 @@ interface Category {
 
 const STAGES = ["New Request", "In Progress", "Repaired", "Scrap"];
 
+import { useAuth } from '../context/AuthContext';
+
 export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
     const { id } = useParams();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const { user } = useAuth();
 
     // Data State
     const [teams, setTeams] = useState<Team[]>([]);
@@ -256,7 +259,7 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                     <div className="space-y-4">
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Created By</label>
-                            <div className="col-span-2 text-sm text-gray-900 border-b border-gray-200 pb-1">Mitchell Admin</div>
+                            <div className="col-span-2 text-sm text-gray-900 border-b border-gray-200 pb-1">{user?.name || 'Mitchell Admin'}</div>
                         </div>
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Maintenance For</label>
@@ -330,11 +333,27 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                         </div>
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Technician</label>
-                            <div className="col-span-2">
+                            <div className="col-span-2 flex gap-2">
                                 <select className="w-full border-b border-gray-300 focus:border-blue-500 py-1" value={formData.technician_id} onChange={e => setFormData({ ...formData, technician_id: e.target.value })}>
                                     <option value="">Select Technician...</option>
                                     {technicians.map(t => <option key={t.id} value={t.name}>{t.name}</option>)}
                                 </select>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (user) {
+                                            const updates: any = { ...formData, technician_id: user.name };
+                                            if (user.team_id) {
+                                                updates.team_id = String(user.team_id);
+                                            }
+                                            setFormData(updates);
+                                        }
+                                    }}
+                                    className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded whitespace-nowrap"
+                                    title={user ? `Assign to ${user.name}` : "Log in to assign"}
+                                >
+                                    Assign to Me
+                                </button>
                             </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">
