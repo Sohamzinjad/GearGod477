@@ -70,8 +70,15 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
         team_id: '',
         technician_id: '',
         category_id: '',
-        stage: 'New Request'
+        stage: 'New Request',
+        created_by_id: ''
     });
+
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+
+    useEffect(() => {
+        api.get('/auth/members').then(res => setAllUsers(res.data));
+    }, []);
 
     useEffect(() => {
         fetchDropdowns();
@@ -145,7 +152,8 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                     team_id: data.team_id || '',
                     technician_id: data.technician_id || '',
                     category_id: data.category_id || '',
-                    stage: data.stage
+                    stage: data.stage,
+                    created_by_id: data.created_by_id || ''
                 });
                 setLoading(false);
             })
@@ -162,6 +170,7 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                 team_id: formData.team_id ? parseInt(String(formData.team_id)) : null,
                 technician_id: formData.technician_id ? parseInt(String(formData.technician_id)) : null,
                 category_id: formData.category_id ? parseInt(String(formData.category_id)) : null,
+                created_by_id: formData.created_by_id ? parseInt(String(formData.created_by_id)) : null,
                 duration: parseFloat(String(formData.duration)),
                 scheduled_date: formData.scheduled_date ? formData.scheduled_date.split('T')[0] : null,
             };
@@ -216,7 +225,13 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                 {!isNew && (
                     <div className="flex gap-2">
                         {/* Placeholder Smart Button */}
-                        <button className="flex flex-col items-center justify-center border border-gray-300 bg-white px-3 py-1 rounded hover:bg-gray-50">
+                        <button
+                            onClick={() => {
+                                // Trigger download in new tab
+                                window.open(`http://127.0.0.1:8000/requests/${id}/worksheet`, '_blank');
+                            }}
+                            className="flex flex-col items-center justify-center border border-gray-300 bg-white px-3 py-1 rounded hover:bg-gray-50"
+                        >
                             <FileText size={14} className="text-blue-600" />
                             <span className="text-xs font-medium">Worksheet</span>
                         </button>
@@ -260,7 +275,9 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
                     <div className="space-y-4">
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Created By</label>
-                            <div className="col-span-2 text-sm text-gray-900 border-b border-gray-200 pb-1">{user?.name || 'Mitchell Admin'}</div>
+                            <div className="col-span-2 text-sm text-gray-900 border-b border-gray-200 pb-1">
+                                {isNew ? user?.name : (allUsers.find(u => u.id === Number(formData.created_by_id))?.name || user?.name || '-')}
+                            </div>
                         </div>
                         <div className="grid grid-cols-3 items-center">
                             <label className="text-sm font-medium text-gray-600">Maintenance For</label>

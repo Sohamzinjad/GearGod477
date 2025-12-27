@@ -4,6 +4,8 @@ import api from '../api';
 import { Clock, CheckCircle, AlertOctagon, XCircle } from 'lucide-react';
 import clsx from 'clsx';
 
+interface User { id: number; name: string; }
+
 interface MaintenanceRequest {
     id: number;
     subject: string;
@@ -11,7 +13,7 @@ interface MaintenanceRequest {
     equipment_id?: number;
     work_center_id?: number;
     priority: string;
-    technician_id: string;
+    technician_id?: number; // Changed to number
     scheduled_date?: string;
 }
 
@@ -24,16 +26,24 @@ const STAGES = {
 
 export default function MaintenanceKanban() {
     const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [draggedReq, setDraggedReq] = useState<MaintenanceRequest | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchRequests();
+        fetchUsers();
     }, []);
 
     const fetchRequests = () => {
         api.get('/requests/')
             .then(res => setRequests(res.data))
+            .catch(err => console.error(err));
+    };
+
+    const fetchUsers = () => {
+        api.get('/auth/members')
+            .then(res => setUsers(res.data))
             .catch(err => console.error(err));
     };
 
@@ -50,9 +60,14 @@ export default function MaintenanceKanban() {
         return requests.filter(r => r.stage === stage);
     };
 
-    const getInitials = (name: string) => {
+    const getUserName = (id?: number) => {
+        if (!id) return null;
+        return users.find(u => u.id === id)?.name;
+    };
+
+    const getInitials = (name?: string) => {
         if (!name) return '??';
-        return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        return String(name).split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
     };
 
     const isOverdue = (req: MaintenanceRequest) => {
@@ -92,6 +107,7 @@ export default function MaintenanceKanban() {
                         >
                             {getRequestsByStage(stageName).map(req => {
                                 const overdue = isOverdue(req);
+                                const techName = getUserName(req.technician_id);
                                 return (
                                     <div
                                         key={req.id}
@@ -142,13 +158,13 @@ export default function MaintenanceKanban() {
 
                                         <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-100">
                                             <div className="flex items-center gap-2">
-                                                {req.technician_id && (
-                                                    <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold" title={req.technician_id}>
-                                                        {getInitials(req.technician_id)}
+                                                {techName && (
+                                                    <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold" title={techName}>
+                                                        {getInitials(techName)}
                                                     </div>
                                                 )}
                                                 <span className="text-xs text-gray-400">
-                                                    {req.technician_id || 'Unassigned'}
+                                                    {techName || 'Unassigned'}
                                                 </span>
                                             </div>
 

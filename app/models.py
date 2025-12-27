@@ -126,12 +126,15 @@ class MaintenanceRequest(Base):
     category_id = Column(Integer, ForeignKey("categories.id"))
     company_id = Column(String, nullable=True) # Placeholder for Company Name/ID
 
+    created_by_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Creator of the request
+
     equipment = relationship("Equipment", back_populates="requests")
     work_center = relationship("WorkCenter", back_populates="requests")
     team = relationship("Team", back_populates="requests")
     category = relationship("Category") 
     
     technician = relationship("User", foreign_keys=[technician_id])
+    created_by = relationship("User", foreign_keys=[created_by_id])
 
 
 class UserRole(str, enum.Enum):

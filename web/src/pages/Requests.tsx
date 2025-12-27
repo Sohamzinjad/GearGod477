@@ -17,10 +17,14 @@ interface MaintenanceRequest {
     category?: Category;
     team?: Team;
     company?: string;
+    created_by_id?: number;
 }
+
+interface User { id: number; name: string; }
 
 export default function RequestsPage() {
     const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const navigate = useNavigate();
 
     const [searchParams] = useSearchParams();
@@ -28,6 +32,7 @@ export default function RequestsPage() {
 
     useEffect(() => {
         fetchRequests();
+        fetchUsers();
     }, [equipmentId]);
 
     const fetchRequests = () => {
@@ -37,6 +42,17 @@ export default function RequestsPage() {
         api.get('/requests/', { params })
             .then(res => setRequests(res.data))
             .catch(err => console.error(err));
+    };
+
+    const fetchUsers = () => {
+        api.get('/auth/members')
+            .then(res => setUsers(res.data))
+            .catch(err => console.error(err));
+    };
+
+    const getUserName = (id?: string | number) => {
+        if (!id) return '-';
+        return users.find(u => u.id === parseInt(String(id)))?.name || '-';
     };
 
     return (
@@ -51,6 +67,12 @@ export default function RequestsPage() {
                     >
                         <Plus size={16} /> New
                     </button>
+                    {equipmentId && (
+                        <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm">
+                            <span>Filtered by Equipment #{equipmentId}</span>
+                            <button onClick={() => navigate('/requests')} className="hover:text-blue-900 font-bold">×</button>
+                        </div>
+                    )}
                 </div>
                 <div className="relative w-96">
                     <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
@@ -68,7 +90,7 @@ export default function RequestsPage() {
                     <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
                         <tr>
                             <th className="px-6 py-3">Subject</th>
-                            <th className="px-6 py-3">Employee</th>
+                            <th className="px-6 py-3">Created By</th>
                             <th className="px-6 py-3">Technician</th>
                             <th className="px-6 py-3">Category</th>
                             <th className="px-6 py-3">Stage</th>
@@ -83,8 +105,8 @@ export default function RequestsPage() {
                                 className="hover:bg-blue-50 cursor-pointer transition-colors"
                             >
                                 <td className="px-6 py-3 font-medium text-gray-900">{req.subject}</td>
-                                <td className="px-6 py-3 text-gray-600">{req.employee || 'Mitchell Admin'}</td>
-                                <td className="px-6 py-3 text-gray-600">{req.technician_id || '-'}</td>
+                                <td className="px-6 py-3 text-gray-600">{getUserName(req.created_by_id)}</td>
+                                <td className="px-6 py-3 text-gray-600">{getUserName(req.technician_id)}</td>
                                 <td className="px-6 py-3 text-gray-600">{req.category?.name || '-'}</td>
                                 <td className="px-6 py-3">
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${req.stage === 'New Request' ? 'bg-blue-100 text-blue-700' :

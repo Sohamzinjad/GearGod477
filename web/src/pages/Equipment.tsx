@@ -11,6 +11,7 @@ interface Equipment {
     category_id?: number;
     team_id?: number;
     employee_id?: string;
+    default_technician_id?: string;
 }
 
 interface Category { id: number; name: string; }
@@ -101,7 +102,7 @@ export default function EquipmentPage() {
                                 <td className="px-6 py-3 font-medium text-gray-900">{eq.name}</td>
                                 <td className="px-6 py-3 text-gray-600">{getUserName(eq.employee_id)}</td>
                                 <td className="px-6 py-3 text-gray-600">{eq.serial_number}</td>
-                                <td className="px-6 py-3 text-gray-600">Mitchell Admin</td>
+                                <td className="px-6 py-3 text-gray-600">{getUserName(eq.default_technician_id)}</td>
                                 <td className="px-6 py-3 text-gray-600">{getCategoryName(eq.category_id)}</td>
                                 <td className="px-6 py-3">
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${eq.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>

@@ -101,6 +101,7 @@ class MaintenanceRequestBase(BaseModel):
 
     team_id: Optional[int] = None
     category_id: Optional[int] = None
+    created_by_id: Optional[int] = None
 
 class MaintenanceRequestCreate(MaintenanceRequestBase):
     pass
