@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import EquipmentPage from './pages/Equipment';
 import WorkCentersPage from './pages/WorkCenters';
 import MaintenanceKanban from './pages/MaintenanceKanban';
+import MaintenanceCalendar from './pages/MaintenanceCalendar';
 import RequestsPage from './pages/Requests';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -34,6 +35,7 @@ function App() {
               <Route path="/requests/new" element={<RequestDetailPage isNew={true} />} />
               <Route path="/requests/:id" element={<RequestDetailPage />} />
               <Route path="/kanban" element={<MaintenanceKanban />} />
+              <Route path="/calendar" element={<MaintenanceCalendar />} />
               <Route path="/teams" element={<TeamsPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
             </Route>

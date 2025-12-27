@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Wrench, Settings, Hammer, ClipboardList, Factory, LogOut, Tag } from 'lucide-react';
+import { LayoutDashboard, Wrench, Settings, Hammer, ClipboardList, Factory, LogOut, Tag, Calendar } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,6 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { name: 'Requests', path: '/requests', icon: ClipboardList },
         { name: 'Kanban', path: '/kanban', icon: Wrench },
+        { name: 'Calendar', path: '/calendar', icon: Calendar },
         { name: 'Equipment', path: '/equipment', icon: Hammer },
         { name: 'Work Centers', path: '/work-centers', icon: Factory },
 

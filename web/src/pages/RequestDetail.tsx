@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
 import { ArrowLeft, FileText, Settings } from 'lucide-react';
 
@@ -41,6 +41,7 @@ const STAGES = ["New Request", "In Progress", "Repaired", "Scrap"];
 export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     // Data State
     const [teams, setTeams] = useState<Team[]>([]);
@@ -59,9 +60,9 @@ export default function RequestDetailPage({ isNew }: { isNew?: boolean }) {
         equipment_id: '',
         work_center_id: '',
         request_date: new Date().toISOString().split('T')[0],
-        scheduled_date: '',
+        scheduled_date: searchParams.get('date') ? `${searchParams.get('date')}T09:00` : '',
         duration: 0,
-        maintenance_type: 'Corrective',
+        maintenance_type: searchParams.get('type') || 'Corrective',
         priority: 'Low',
         team_id: '',
         technician_id: '',
