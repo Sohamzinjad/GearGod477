@@ -48,3 +48,31 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
         open_requests_count=open_count,
         overdue_requests_count=overdue_count
     )
+
+@router.get("/dashboard/recent_requests")
+async def get_recent_requests(db: AsyncSession = Depends(get_db)):
+    from sqlalchemy.orm import selectinload
+    
+    query = (
+        select(MaintenanceRequest)
+        .options(selectinload(MaintenanceRequest.category))
+        .order_by(MaintenanceRequest.id.desc())
+        .limit(10)
+    )
+    
+    result = await db.execute(query)
+    requests = result.scalars().all()
+    
+    data = []
+    for req in requests:
+        data.append({
+            "id": req.id,
+            "subject": req.subject,
+            "employee": "Mitchell Admin", 
+            "technician": req.technician_id or "Unassigned",
+            "category": req.category.name if req.category else "Uncategorized", 
+            "stage": req.stage.value,
+            "company": "My Company"
+        })
+        
+    return data

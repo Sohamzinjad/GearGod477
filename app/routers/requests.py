@@ -79,15 +79,22 @@ async def update_request(request_id: int, request_update: MaintenanceRequestUpda
     update_data = request_update.model_dump(exclude_unset=True)
     
     # Check for Scrap transition
+    # Sync Equipment Status with Stage
     new_stage = update_data.get("stage")
-    if new_stage == RequestStage.SCRAP and db_request.stage != RequestStage.SCRAP:
-        # Only scrap Equipment
+    if new_stage and new_stage != db_request.stage:
         if db_request.maintenance_for == MaintenanceFor.EQUIPMENT and db_request.equipment_id:
             equipment_result = await db.execute(select(Equipment).filter(Equipment.id == db_request.equipment_id))
             equipment = equipment_result.scalar_one_or_none()
+            
             if equipment:
-                equipment.status = EquipmentStatus.DECOMMISSIONED
-                equipment.scrap_date = db_request.request_date # Or today
+                if new_stage == RequestStage.IN_PROGRESS:
+                    equipment.status = EquipmentStatus.MAINTENANCE.value
+                elif new_stage == RequestStage.REPAIRED:
+                    equipment.status = EquipmentStatus.ACTIVE.value
+                elif new_stage == RequestStage.SCRAP:
+                    equipment.status = EquipmentStatus.DECOMMISSIONED.value
+                    equipment.scrap_date = db_request.request_date # Set scrap date
+                
                 db.add(equipment)
 
     # Apply updates

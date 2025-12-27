@@ -25,6 +25,7 @@ class TeamCreate(TeamBase):
 
 class Team(TeamBase):
     id: int
+    users: List["UserResponse"] = []
 
     class Config:
         from_attributes = True
@@ -131,4 +132,28 @@ class DashboardStats(BaseModel):
     critical_equipment_count: int
     technician_load: int
     open_requests_count: int
-    overdue_requests_count: int
+
+# User Schemas
+class UserBase(BaseModel):
+    email: str
+    name: str
+    role: Optional[str] = "User"
+
+class UserCreate(UserBase):
+    password: str
+    team_id: Optional[int] = None
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class UserResponse(UserBase):
+    id: int
+    team_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

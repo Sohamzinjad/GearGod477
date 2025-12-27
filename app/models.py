@@ -21,6 +21,7 @@ class RequestStage(str, enum.Enum):
 
 class EquipmentStatus(str, enum.Enum):
     ACTIVE = "Active"
+    MAINTENANCE = "Maintenance"
     DECOMMISSIONED = "Decommissioned"
 
 class MaintenanceFor(str, enum.Enum):
@@ -44,6 +45,7 @@ class Team(Base):
     
     equipments = relationship("Equipment", back_populates="team")
     requests = relationship("MaintenanceRequest", back_populates="team")
+    users = relationship("User", back_populates="team", lazy="selectin")
 
 
 class WorkCenter(Base):
@@ -118,3 +120,23 @@ class MaintenanceRequest(Base):
     work_center = relationship("WorkCenter", back_populates="requests")
     team = relationship("Team", back_populates="requests")
     category = relationship("Category") 
+
+
+class UserRole(str, enum.Enum):
+    ADMIN = "Admin"
+    TECHNICIAN = "Technician"
+    USER = "User"
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    name = Column(String)
+    hashed_password = Column(String)
+    role = Column(Enum(UserRole), default=UserRole.USER)
+    
+    team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
+    
+    team = relationship("Team", back_populates="users")
+ 

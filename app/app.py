@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
-from app.routers import settings, equipment, requests, dashboard, workcenters
+from app.routers import settings, equipment, requests, dashboard, workcenters, auth, teams
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,10 +22,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(auth.router)
 app.include_router(settings.router, tags=["Settings"])
 app.include_router(workcenters.router, tags=["Work Centers"])
 app.include_router(equipment.router, tags=["Equipment"])
 app.include_router(requests.router, tags=["Maintenance Requests"])
+app.include_router(teams.router, tags=["Teams"])
 app.include_router(dashboard.router, tags=["Dashboard"])
 
 @app.get("/")
